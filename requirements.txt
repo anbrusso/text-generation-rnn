@@ -1,5 +1,4 @@
 tensorflow
 numpy
-matplotlib
-jupyterlab
 sklearn
+django
