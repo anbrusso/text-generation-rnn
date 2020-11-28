@@ -133,3 +133,4 @@ dmypy.json
 #remove the messages folder from git
 messages
 notebooks/checkpoints
+textgeneration/static

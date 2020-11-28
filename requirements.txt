@@ -1,4 +1,4 @@
-tensorflow
 numpy
 sklearn
-django
+tensorflow
+djangorestframework
