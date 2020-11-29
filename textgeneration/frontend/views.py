@@ -3,50 +3,71 @@ import tensorflow as tf
 import json
 import numpy
 import sys
-# Create your views here.
-#def index(request):
-def main():
-    models_folder = "models/basic/"#the folder that the model information is stored within
+import re
+import os
+from .forms import TextGenerateForm
+from django.http import HttpResponse
+def generate_text(seed_text="Default Seed Text",model_type="basic",temperature=1.0,output_length=1000):
+    models_folder = os.path.join(os.path.dirname(os.path.realpath(__file__)),"models/"+model_type+"/")
     #eventually, change these so specific model can be received in.
-    character_map = "character-map-i1.json"
-    model_file = "model-i1.h5"
-    text = "Do that sometimes with reddit, only time I use facebook is for group chat. Only way I justify reddit to myself is otherwise I would be completely disconnected from anything happening in the world. Don't have cable, listen to radio or any other sources of news, so that's the only way I'm going to find out whether we're bombing Syria. Also the deepfried memes."
-    outputlen = 1000
-    temperature = 0.04 #the temperature is used to skew the probabilities in a direction, to create more/less randomness in the output.
+    character_map = "character-map.json"
+    model_file = "model.h5"
 
+    
     #setup all the maps that will be needed for converting to and from text to the model.
     with open(models_folder + character_map) as json_file:
         int_to_char = json.load(json_file)
-    int_to_char = { int(key) : value  for (key, value) in int_to_char.items()}#this is to fix the mapping so it has integer keys like it is supposed to
-    char_to_int = { value : int(key) for (key, value) in int_to_char.items()}#create a reverse map, since we'll have to conver their input.
-    vocab_size = len(int_to_char.keys())#the number of characters in the vocabulary
+    char_to_int = { v : float(i) for (i, v) in enumerate(int_to_char)}#create a reverse map, since we'll have to conver their input.
+    n_vocab = len(int_to_char)#the number of characters in the vocabulary
 
-    #Take the text that has been received in, and truncate it if it is too long.
-    text = text.lower()[:300]
-    #we convert the letters into an array of the corresponding numbers instead.
-    text = [int(char_to_int[letter]) for letter in text]
+    #load the model from our model file.
+    model = tf.keras.models.load_model(models_folder + model_file, compile=False)
 
-    #load the lstm model from our model file.
-    model = tf.keras.models.load_model(models_folder + model_file)
-    
-    for i in range(outputlen):
-        #we convert text to be the correct shape for the lstm, and we squish all the values to be between 0 and 1
-        x = numpy.reshape(text, (1, len(text), 1))
-        x = x / float(vocab_size)
+    #cleanup the text and get it into a usable format for pushing it through our model
+    input_text = seed_text.lower()
+    input_text = input_text.encode("ascii", "ignore").decode()
+    input_text = re.sub(r"[~#$%&*+;<=>\[\\^_\]`{|}0-9@/]","",input_text)
+    input_text = [char_to_int[c] for c in input_text]
 
-        #run the input through our model.
-        predictions = model.predict(x, verbose=0)
-        predictions = predictions / temperature #we devide the predictions by our temparature. For higher temperatures inject more randomness into the text.
-        #select the prediction randomly, by sampling according to the prediction confidence.
-        predicted_char = tf.random.categorical(predictions,num_samples=1)[-1,0].numpy()
+    if model_type =="basic":
+        output_text = []
+        # generate characters
+        for i in range(output_length):
+            x = numpy.reshape(input_text, (1, len(input_text), 1))
+            x = x / float(n_vocab)
+            prediction = model.predict(x, verbose=0)
+            index = numpy.argmax(prediction)
+            result = int_to_char[index]
+            output_text.append(result)
+            input_text.append(index)
+            input_text = input_text[1:len(input_text)]
+    elif model_type == "improved":
+        input_text = tf.expand_dims(input_text,0)
 
-        result = int_to_char[predicted_char]
+        #begin generating output
+        output_text = []
+        model.reset_states()
+        #we have two output generation options, we either generate a specific length, or until we hit a new line.
+        for i in range(output_length):
+            #run the input through our model.
+            predictions = model(input_text)
+            predictions = tf.squeeze(predictions, 0)
+            predictions = predictions  / temperature #we devide the predictions by our temparature. For higher temperatures inject more randomness into the text.
+            #select the prediction randomly, by sampling according to the prediction confidence.
+            predicted_int = tf.random.categorical(predictions,num_samples=1)[-1,0].numpy()
+            #pass forward to next stage
+            input_text = tf.expand_dims([predicted_int], 0)
+            output_text.append(int_to_char[predicted_int])
 
-        #Add the character to our text, and bump out the first letter
-        text.append(predicted_char)
-        text = text[1:len(text)]
-        print(result, end = '',flush=True)
-    #return render(request,'index.html')
+    return ''.join(output_text)
 
-if __name__=="__main__":
-    main()
+# Create your views here.
+def index(request):
+    if request.method == 'POST':
+        form = TextGenerateForm(request.POST)
+        if form.is_valid():
+            output_text = { "output_text": generate_text(**form.cleaned_data)}
+            return HttpResponse(json.dumps(output_text))
+    else:
+        form = TextGenerateForm()
+    return render(request,'index.html', {'form':form})
