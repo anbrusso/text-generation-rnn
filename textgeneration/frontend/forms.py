@@ -2,13 +2,14 @@ from django import forms
 class TextGenerateForm(forms.Form):
     CHOICES=[
         ('basic','Basic -- Initial simple LSTM model (note: this is slow)'),
-        ('improved','Improved -- An Improved GRU model with improved cross training, temperature adjusts, and optimizations.')
+        ('improved','Improved -- An Improved GRU model with improved cross training, temperature adjusts, and optimizations.'),
+        ('words','Words -- Similar to the Improved, but utilizes word base tokenization instead of characters.')
         ]
     seed_text = forms.CharField(
                             max_length=1000,
                             required=True,
                             widget=forms.TextInput(attrs={'class': 'form-control'}),
-                            initial="Default Seed Text"
+                            initial="What is the meaning of life?"
                             )
     output_length = forms.IntegerField(min_value=0,
                                         max_value=5000,
