@@ -26,11 +26,11 @@ def generate_text(seed_text="Default Seed Text",model_type="basic",temperature=1
     #cleanup the text and get it into a usable format for pushing it through our model
     input_text = seed_text.lower()
     input_text = input_text.encode("ascii", "ignore").decode()
-    if model_type in ["basic","improved"]:
+    if model_type in ["character","character-improved","character-new"]:
         input_text = re.sub(r"[~#$%&*+;<=>\[\\^_\]`{|}0-9@/]","",input_text)
         input_text = [token_to_int.get(c,0) for c in input_text]
 
-        if model_type =="basic":
+        if model_type =="character":
             output_text = []
             # generate characters
             for i in range(output_length):
@@ -42,7 +42,7 @@ def generate_text(seed_text="Default Seed Text",model_type="basic",temperature=1
                 output_text.append(result)
                 input_text.append(index)
                 input_text = input_text[1:len(input_text)]
-        elif model_type == "improved":
+        elif model_type in ["character-improved","character-new"]:
             input_text = tf.expand_dims(input_text,0)
 
             #begin generating output
@@ -59,7 +59,7 @@ def generate_text(seed_text="Default Seed Text",model_type="basic",temperature=1
                 #pass forward to next stage
                 input_text = tf.expand_dims([predicted_int], 0)
                 output_text.append(int_to_token[predicted_int])
-    elif model_type == "words":
+    elif model_type in ["words","words-deeper","shakespeare","words-new"]:
         input_text = re.sub(r"[~#$%&*+;<=>\[\\^_\]`{|}0-9\(\)\'\"\-\"\:\/]","",input_text)#strip out some ascii characters that aren't super important.
         input_text = re.findall(r"\w+|\W",input_text)#we consider character strings, or punctuation to be "words"
         input_text = [token_to_int.get(c,0) for c in input_text]
@@ -76,7 +76,7 @@ def generate_text(seed_text="Default Seed Text",model_type="basic",temperature=1
             #pass forward to next stage
             input_text = tf.expand_dims([predicted_int], 0)
             output_text.append(int_to_token[predicted_int])
-    return seed_text + ''.join(output_text)
+    return seed_text + ''.join(output_text).replace("\n","<br/>")
 
 # Create your views here.
 def index(request):

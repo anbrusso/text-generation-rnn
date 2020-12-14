@@ -1,21 +1,25 @@
 from django import forms
 class TextGenerateForm(forms.Form):
     CHOICES=[
-        ('basic','Basic -- Initial simple LSTM model (note: this is slow)'),
-        ('improved','Improved -- An Improved GRU model with improved cross training, temperature adjusts, and optimizations.'),
-        ('words','Words -- Similar to the Improved, but utilizes word base tokenization instead of characters.')
+        ('character','Character -- Initial character based LSTM model (note: this is slow)'),
+        ('character-improved','Character Improved -- Improved GRU model using Many to Many LSTM with cross training, temperature adjusts, and optimizations'),
+        ('character-new','Character New -- The most recently generated model fresh from character notebook'),
+        ('words','Words -- Similar to character improved, but utilizes word base tokenization instead of characters'),
+        ('words-deeper','Words Deeper -- Words based LSTM with reduced vocabulary and deeper RNN'),
+        ('shakespeare','Shakespeare -- Words improved, but ran on all of Shakespeare''s plays'),
+        ('words-new','Word New -- The most recently generated model fresh from the word notebook')
         ]
     seed_text = forms.CharField(
                             max_length=1000,
                             required=True,
                             widget=forms.TextInput(attrs={'class': 'form-control'}),
-                            initial="What is the meaning of life?"
+                            initial="My goal as a text generator is"
                             )
     output_length = forms.IntegerField(min_value=0,
                                         max_value=5000,
                                         required=True,
-                                        initial=300,
+                                        initial=150,
                                         widget=forms.NumberInput(attrs={'class': 'form-control'})
                                         )
     temperature = forms.FloatField(initial="1",widget=forms.NumberInput(attrs={'class': 'form-control','type':'range', 'step': '.1', 'min': '0.01', 'max': '2.0'}), required=True)
-    model_type = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect,initial="improved", required=True)
+    model_type = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect,initial="words", required=True)
