@@ -1,13 +1,15 @@
 from django import forms
 class TextGenerateForm(forms.Form):
+    #The options for the different models. These correspond to the different options that will run in views.py You will need to add to this list for them to show up in the form, and then
+    #add them to views.py for them to actually be generateable.
     CHOICES=[
         ('character','Character -- Initial character based LSTM model (note: this is slow)'),
         ('character-improved','Character Improved -- Improved GRU model using Many to Many LSTM with cross training, temperature adjusts, and optimizations'),
         ('character-new','Character New -- The most recently generated model fresh from character notebook'),
         ('words','Words -- Similar to character improved, but utilizes word base tokenization instead of characters'),
         ('words-deeper','Words Deeper -- Words based LSTM with reduced vocabulary and deeper RNN'),
-        ('shakespeare','Shakespeare -- Words improved, but ran on all of Shakespeare''s plays'),
-        ('words-new','Word New -- The most recently generated model fresh from the word notebook')
+        ('words-new','Word New -- The most recently generated model fresh from the word notebook'),
+        ('shakespeare','Shakespeare -- Words improved, but ran on all of Shakespeare''s plays')
         ]
     seed_text = forms.CharField(
                             max_length=1000,

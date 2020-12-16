@@ -9,17 +9,17 @@ An RNN based model intended to replicate text that I have written.
 The trained models delivered with the codebase are mostly trained on a corpus of text I've gather from my own posts on Discord, Facebook Messenger, and other written works of mine.
 
 ## How to Train the model
-Since the source dataset is rather personal, I have not released the full text corpus, only the trained models for domonstration purposes. With the code, I've included a copy of shakespearean dialogues from https://www.tensorflow.org/tutorials/text/text_generation, which can be used to train and test the model yourself.
+Since the source dataset is rather personal, I have not released the full text corpus, only the trained models for demonstration purposes. With the code, I've included a copy of shakespearean dialogues from https://www.tensorflow.org/tutorials/text/text_generation, which can be used to train and test the model yourself.
 
-To train your own model, install [Jupyter Notebooks](https://jupyter.org/). Then you can open one of the notebooks in the notebooks directory with:
+To train the model on your own corpus, or retrain it with the shakespearean dialogue, install [Jupyter Notebooks](https://jupyter.org/). Then you can open one of the notebooks in the notebooks directory with:
 
     jupyter notebook character-model.ipynb
     jupyter notebook word-model.ipynb
-In the notebook, if you run all of the cells it will build and train the model, and generate some text using the model. Everything to run the models is saved in the directory `textgeneration/frontend/models/character-new` and `textgeneration/frontend/models/words-new`. These two models are automatically loaded into the page for testing, but additional models could be added by adding them to the forms.py and views.py files.
+In the notebook, if you run all of the cells it will build and train the model, and generate some text using the model. Everything to run the models is saved in the directory `textgeneration/frontend/models/character-new` and `textgeneration/frontend/models/words-new`. These two models are automatically loaded into the page for testing, but additional models could be saved and added to the forms.py and views.py files.
 
 ## How to Test the model
-To test the models, you can either adjust the seed text in the notebook and rerun the final cell to generate something new, or use the testing page. To run the testing page, you will need [Docker](https://www.docker.com/products/docker-desktop) installed. After docker is installed, you can startup the webserver by navigating to the code's root directory and running
+To test the models, you can either adjust the seed text in the notebook and rerun the final cell to generate something new, or use the testing page. To run the testing page, you will need [Docker](https://www.docker.com/products/docker-desktop) installed (as well as [docker compose](https://docs.docker.com/compose/install/), which comes with docker on Windows and Mac). After docker is installed, you can startup the webserver by navigating to the code's root directory and running:
 
     docker-compose up
 
-This will pull down the base python container, build in all of the dependencies, and start up the webserver, which can be accessed at `http://localhost:8000/`. Models that have been recently built can be ran with the options Character New and Word New, which point to the directories that the two notebooks save their models in.
+This will pull down the base python container, build in all of the dependencies for django and tensorflow, and start up the webserver, which can be accessed at `http://localhost:8000/`. Models that have been recently built can be ran with the options Character New and Word New, which point to the directories that the two notebooks save their models in.
