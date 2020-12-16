@@ -5,7 +5,9 @@ services:
             context: .
             dockerfile: Dockerfile
         command: python manage.py runserver 0.0.0.0:8000
-        volumes:
-            - ./textgeneration:/usr/src/app/
+        #this can be uncommented when doing development, to allow the code to change while it is being edited.
+        #see https://docs.docker.com/docker-for-windows/ for how to setup sharing for folders on windows.
+        #volumes:
+        #    - ./textgeneration:/usr/src/app/
         ports:
             - 127.0.0.1:8000:8000

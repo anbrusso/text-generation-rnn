@@ -133,5 +133,6 @@ dmypy.json
 #remove the messages folder from git
 messages/*
 !messages/shakespeare.txt
+!messages/wonderland.txt
 notebooks/checkpoints
 textgeneration/static
