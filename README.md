@@ -1,4 +1,4 @@
-# Andrew RNN
+# Text Generation RNN
 An RNN based model intended to replicate the style of text that I have written.
 
 ## Requirements
