@@ -1,4 +1,4 @@
-# Text Generation RNN
+# [Text Generation RNN](https://andrew.brusso.me/projects/generating-text-with-rnns)
 An RNN based model intended to replicate the style of text that I have written.
 
 ## Requirements
