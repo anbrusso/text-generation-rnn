@@ -23,5 +23,5 @@ class TextGenerateForm(forms.Form):
                                         initial=150,
                                         widget=forms.NumberInput(attrs={'class': 'form-control'})
                                         )
-    temperature = forms.FloatField(initial="1",widget=forms.NumberInput(attrs={'class': 'form-control','type':'range', 'step': '.1', 'min': '0.01', 'max': '2.0'}), required=True)
+    temperature = forms.FloatField(initial=".5",widget=forms.NumberInput(attrs={'class': 'form-control','type':'range', 'step': '.1', 'min': '0.01', 'max': '2.0'}), required=True)
     model_type = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect,initial="words", required=True)
