@@ -2,3 +2,4 @@ numpy
 tensorflow-cpu
 django
 gunicorn
+whitenoise
