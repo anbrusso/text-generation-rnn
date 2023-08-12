@@ -4,8 +4,7 @@ services:
     runtime: python
     buildCommand: "./build.sh"
     startCommand: "gunicorn --pythonpath textgeneration textgeneration.wsgi"
+    plan: free # optional; defaults to starter
     envVars:
       - key: SECRET_KEY
         generateValue: true
-      - key: WEB_CONCURRENCY
-        value: 4
