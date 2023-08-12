@@ -4,8 +4,7 @@ set -o errexit
 
 pip install -r requirements.txt
 
-#!/bin/sh
-python manage.py flush --no-input
-python manage.py makemigrations
-python manage.py migrate
-python manage.py collectstatic --no-input --clear
+python textgeneration/manage.py flush --no-input
+python textgeneration/manage.py makemigrations
+python textgeneration/manage.py migrate
+python textgeneration/manage.py collectstatic --no-input --clear
